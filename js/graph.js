@@ -54,13 +54,13 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 		radio("node:deselect").subscribe(deselect);
 
 		// On node mouseover
-		radio("node:mouseover").subscribe(hover);
-
-		// On node mouseout
-		radio("node:mouseout").subscribe(hoverOut);
+		radio("node:current").subscribe(setCurrent);
 
 		// On search
 		radio("search:do").subscribe(search);
+
+		// 
+		radio("search:select").subscribe(searchSelect);
 	}
 
 
@@ -147,7 +147,7 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 			.attr("cy", function(d) { return d.y; })
 			.attr("r", nodeSize)
 			.call(function() { setTimeout(function () { graph.stop() }, 20000); });
-			//.call(force.drag);
+			//.call(graph.force.drag);
 
 		// Add alt-text when hovering over a node
 		// node.append("title")
@@ -187,27 +187,6 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 
 
 
-	// Function that corresponds to the "surprise me" button
-	// TODO: change function call in appropriate file
-	// TODO: I don't think this function works because of the
-	// TODO: Change to broadcast event
-	graph.selectRandom = function() {
-
-		// Get all nodes
-		var nodes = d3.selectAll("circle.node");
-
-		// Get random index
-		var index = Math.ceil(Math.random()*nodes[0].length)
-		var node = nodes[0][index];
-		
-
-		// Select this node
-		select(node.id);
-
-		// Return false for mouseevent
-		return false;
-	}
-
 	graph.getNodeFromId = function(id) {
 		return d3.selectAll("circle.node").filter(function (d) { return (d.id == id); });
 	}
@@ -221,6 +200,7 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 	//           Private Functions				//
 	//											//
 	//////////////////////////////////////////////
+
 
 
 	// Calculates the stroke width
@@ -292,20 +272,6 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 	}
 
 
-	// What happens when we hover over a node
-	var hoverOut = function(id) {
-		// Nothing here
-	}
-
-
-	// What happens when we hover over a node
-	var hover = function(id) {
-
-		// Set node as current
-		setCurrent(id);
-	}
-
-
 	// Sets the node as the current node
 	var setCurrent = function(id) {
 
@@ -365,6 +331,16 @@ define(["d3", "util/screen", "radio", "util/levenshtein"], function(d3, screen, 
 			var minDistTitle = Math.min.apply(null,distTitle);
 			return (Math.min(minDistAuthors,minDistTitle) <= 1)
 		}
+	}
+
+
+	// Selects all node from a search result
+	// TODO: This isn't very pretty. Maybe move info about searched nodes to 
+	// the model
+	var searchSelect = function() {
+		d3.selectAll("circle.search").each( function (d,i) { 
+			radio("node:select").broadcast(d.id);
+		}); 
 	}
 	
 

@@ -35,6 +35,7 @@ define(["jquery", "util/dateFormat", "radio", "model"], function ($, _, radio, m
 
 		// On Click, add the abstract etc
 		radio("node:click").subscribe(setAbstract);
+		radio("sidebar:hover").subscribe(setAbstract);
 	}
 
 
@@ -60,7 +61,7 @@ define(["jquery", "util/dateFormat", "radio", "model"], function ($, _, radio, m
 
 		// Get data from model
 		var data = model.getDataFromId(id);
-		
+
 		// Get description
 		$("#info").text(data.authors + ": " + data.title);
 		$("#info").stop(true,true).fadeIn("fast");
@@ -96,7 +97,7 @@ define(["jquery", "util/dateFormat", "radio", "model"], function ($, _, radio, m
 		// Append html
 		$("#info").stop(true,true).fadeIn().html(html);
 
-		// If the abstract isn't catched, fetch it
+		// If the abstract isn't cached, fetch it
 		// It's in the end in case we get it really fast
 		model.getAbstract(id, function(data) {
 			$("#infoAbstract").html(data); 

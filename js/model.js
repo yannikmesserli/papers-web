@@ -96,12 +96,22 @@ define(["data/graph", "radio", "session", "util/array", "util/cookie"], function
 	}
 
 
+	// returns a random id
+	model.getRandom = function() {
+		var index = Math.ceil(Math.random()*model.nodes.length);
+		var node = model.nodes[index];
+		return node.id;
+	}
+
+
 	// Broadcasts the selected nodes and the current nodes. This should 
 	// only be called in the initialization of the page, but I've put it 
 	// apart from init() since it relies on the graph being generated
 	model.broadcastSelected = function() {
 		// Broadcast session
-		model.selected.forEach(function(e) { return radio("node:select").broadcast(e); });
+		model.selected.forEach(function(e) { 
+			return radio("node:select").broadcast(e); 
+		});
 		radio("node:current").broadcast(model.current);
 	}
 
